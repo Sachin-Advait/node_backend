@@ -1,5 +1,29 @@
 import { User } from "../models/user.js";
 
+export async function handleUserSignup(req, res) {
+  const { name, email, password } = req.body;
+
+  if (!email || !password || !name) {
+    res
+      .status(400)
+      .json({ status: false, data: {}, message: "We need a body!" });
+  }
+
+  const result = await User.create({
+    name: name,
+    email: email,
+    password: password,
+  });
+
+  console.log("Result", result);
+
+  return res.status(201).json({
+    status: true,
+    message: "User created successfully",
+    data: result,
+  });
+}
+
 export async function handleGetAllUsers(req, res) {
   const allDbUsers = await User.find({});
 
@@ -30,8 +54,7 @@ export async function handleUpdateUserById(req, res) {
   const body = req.body;
 
   const updateUser = {
-    firstName: body.first_name ?? User.firstName,
-    lastName: body.last_name ?? User.lastName,
+    name: body.name ?? User.name,
     gender: body.gender ?? User.gender,
     jobTitle: body.job_title ?? User.jobTitle,
   };
@@ -54,37 +77,5 @@ export async function handleDeleteUserById(req, res) {
   res.status(200).send({
     status: true,
     message: "User deleted successfully",
-  });
-}
-
-export async function handleCreateNewUser(req, res) {
-  const body = req.body;
-
-  if (
-    !body ||
-    !body.first_name ||
-    !body.email ||
-    !body.job_title ||
-    !body.gender
-  ) {
-    res
-      .status(400)
-      .json({ status: false, data: {}, message: "We need a body!" });
-  }
-
-  const result = await User.create({
-    firstName: body.first_name,
-    lastName: body.last_name,
-    email: body.email,
-    jobTitle: body.job_title,
-    gender: body.gender,
-  });
-
-  console.log("Result", result);
-
-  return res.status(201).json({
-    status: true,
-    message: "User created successfully",
-    data: result,
   });
 }

@@ -3,15 +3,15 @@ import express from "express";
 const router = express.Router();
 
 import {
-  handleCreateNewUser,
   handleDeleteUserById,
   handleGetAllUsers,
   handleGetUserById,
   handleUpdateUserById,
+  handleUserSignup,
 } from "../controllers/user.js";
 
-router.route("/").get(handleGetAllUsers).post(handleCreateNewUser);
-
+router.route("/signup").post(handleUserSignup);
+router.route("/").get(handleGetAllUsers);
 router
   .route("/:id")
   .get(handleGetUserById)
