@@ -1,5 +1,4 @@
 import { User } from "../models/user.js";
-import { v4 as uuidv4 } from "uuid";
 import { setUsers } from "../services/auth.js";
 
 export async function handleUserSignup(req, res) {
@@ -11,16 +10,12 @@ export async function handleUserSignup(req, res) {
       .json({ status: false, data: {}, message: "We need a body!" });
   }
 
-  const result = await User.create({
+  await User.create({
     name: name,
     email: email,
     password: password,
   });
-  // return res.status(201).json({
-  //   status: true,
-  //   message: "User created successfully",
-  //   data: result,
-  // });
+
   return res.redirect("/");
 }
 
@@ -39,9 +34,8 @@ export async function handleUserLogin(req, res) {
       error: "Invalid Username & Password",
     });
 
-  const sessionId = uuidv4();
-  setUsers(sessionId, user);
-  res.cookie("uid", sessionId);
+  const token = setUsers(user);
+  res.cookie("uid", token);
   return res.redirect("/");
 }
 

@@ -13,7 +13,7 @@ export async function handleGenerateNewShortURL(req, res) {
     shortId: shortID,
     redirectUrl: body.url,
     visitHistory: [],
-    // createdBy: req.user._id,
+    createdBy: req.user._id,
   });
 
   // return res
@@ -25,11 +25,13 @@ export async function handleGenerateNewShortURL(req, res) {
 }
 
 export async function handleGetURLAndUpdateHistory(req, res) {
+
   const shortId = req.params.shortId;
 
   const entry = await URL.findOneAndUpdate(
     {
       shortId,
+      // createdBy: req.user._id,
     },
     {
       $push: {
@@ -40,16 +42,15 @@ export async function handleGetURLAndUpdateHistory(req, res) {
     }
   );
 
-  return res
-    .status(200)
-    .redirect(entry.redirectUrl)
-    .json({ status: true, message: "Url retrived successfully", data: entry });
+  if (!entry) {
+    return res.status(404).json({ message: 'Short URL not found or not authorized' });
+  }
+
+  return res.status(200).redirect(entry.redirectUrl);
 }
 
 export async function handleAllGetURL(req, res) {
   const urls = await URL.find({});
 
-  return res
-    .status(200)
-    .json({ status: true, message: "Urls retrived successfully", data: urls });
+  return res.status(200).json({ status: true, message: "Urls retrived successfully", data: urls });
 }

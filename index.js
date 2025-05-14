@@ -6,7 +6,7 @@ import staticRoute from "./routes/staticRouter.js";
 import urlRoute from "./routes/url.js";
 import userRoute from "./routes/user.js";
 import cookieParser from "cookie-parser";
-import { restrictToLoggedinUserOnly } from "./middlewares/auth.js";
+import { restrictToLoggedinUserOnly, checkAuth } from "./middlewares/auth.js";
 dotenv.config();
 
 const app = express();
@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Routes
-app.use("/", staticRoute);
+app.use("/", checkAuth, staticRoute);
 app.use("/api/users", userRoute);
 app.use("/api/url", restrictToLoggedinUserOnly, urlRoute);
 
