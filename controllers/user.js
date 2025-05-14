@@ -9,20 +9,33 @@ export async function handleUserSignup(req, res) {
       .json({ status: false, data: {}, message: "We need a body!" });
   }
 
-  const result = await User.create({
-    name: name,
-    email: email,
-    password: password,
-  });
-
-  console.log("Result", result);
-
-  return res.status(201).json({
-    status: true,
-    message: "User created successfully",
-    data: result,
-  });
+  const result = await User.create({ name: name, email: email, password: password, });
+  // return res.status(201).json({
+  //   status: true,
+  //   message: "User created successfully",
+  //   data: result,
+  // });
+  return res.redirect("/");
 }
+
+
+export async function handleUserLogin(req, res) {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res
+      .status(400)
+      .json({ status: false, data: {}, message: "We need a body!" });
+  }
+
+  const user = await User.findOne({ email, password })
+  if (!user) return res.render("login", {
+    error: "Invalid Username & Password"
+  });
+
+  return res.redirect("/");
+}
+
 
 export async function handleGetAllUsers(req, res) {
   const allDbUsers = await User.find({});

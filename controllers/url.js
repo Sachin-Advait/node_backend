@@ -7,17 +7,21 @@ export async function handleGenerateNewShortURL(req, res) {
   if (!body || !body.url)
     return res.status(400).json({ status: false, message: "Url is requied" });
 
-  const shortId = shortid();
+  const shortID = shortid();
 
-  const result = await URL.create({
-    shortId: shortId,
+  await URL.create({
+    shortId: shortID,
     redirectUrl: body.url,
     visitHistory: [],
+    // createdBy: req.user._id,
   });
 
-  return res
-    .status(201)
-    .json({ status: true, message: "Short url created", data: result });
+  // return res
+  //   .status(201)
+  //   .json({ status: true, message: "Short url created", data: result });
+  return res.render("home", {
+    id: shortID,
+  });
 }
 
 export async function handleGetURLAndUpdateHistory(req, res) {

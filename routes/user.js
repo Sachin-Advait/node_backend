@@ -3,14 +3,16 @@ import express from "express";
 const router = express.Router();
 
 import {
+  handleUserSignup,
+  handleUserLogin,
   handleDeleteUserById,
   handleGetAllUsers,
   handleGetUserById,
   handleUpdateUserById,
-  handleUserSignup,
 } from "../controllers/user.js";
 
-router.route("/signup").post(handleUserSignup);
+router.route("/").post(handleUserSignup);
+router.route("/login").post(handleUserLogin);
 router.route("/").get(handleGetAllUsers);
 router
   .route("/:id")
