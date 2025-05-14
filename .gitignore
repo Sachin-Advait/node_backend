@@ -1,6 +1,7 @@
 .history
 # Node modules
 node_modules/
+/nodemodules
 
 # Logs
 logs/

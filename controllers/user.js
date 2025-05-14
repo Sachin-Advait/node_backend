@@ -1,4 +1,6 @@
 import { User } from "../models/user.js";
+import { v4 as uuidv4 } from "uuid";
+import { setUsers } from "../services/auth.js";
 
 export async function handleUserSignup(req, res) {
   const { name, email, password } = req.body;
@@ -9,7 +11,11 @@ export async function handleUserSignup(req, res) {
       .json({ status: false, data: {}, message: "We need a body!" });
   }
 
-  const result = await User.create({ name: name, email: email, password: password, });
+  const result = await User.create({
+    name: name,
+    email: email,
+    password: password,
+  });
   // return res.status(201).json({
   //   status: true,
   //   message: "User created successfully",
@@ -17,7 +23,6 @@ export async function handleUserSignup(req, res) {
   // });
   return res.redirect("/");
 }
-
 
 export async function handleUserLogin(req, res) {
   const { email, password } = req.body;
@@ -28,14 +33,17 @@ export async function handleUserLogin(req, res) {
       .json({ status: false, data: {}, message: "We need a body!" });
   }
 
-  const user = await User.findOne({ email, password })
-  if (!user) return res.render("login", {
-    error: "Invalid Username & Password"
-  });
+  const user = await User.findOne({ email, password });
+  if (!user)
+    return res.render("login", {
+      error: "Invalid Username & Password",
+    });
 
+  const sessionId = uuidv4();
+  setUsers(sessionId, user);
+  res.cookie("uid", sessionId);
   return res.redirect("/");
 }
-
 
 export async function handleGetAllUsers(req, res) {
   const allDbUsers = await User.find({});
