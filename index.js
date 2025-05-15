@@ -6,7 +6,7 @@ import staticRoute from "./routes/staticRouter.js";
 import urlRoute from "./routes/url.js";
 import userRoute from "./routes/user.js";
 import cookieParser from "cookie-parser";
-import { restrictToLoggedinUserOnly, checkAuth } from "./middlewares/auth.js";
+import { checkForAuthorization, restrictTo } from "./middlewares/auth.js";
 dotenv.config();
 
 const app = express();
@@ -24,11 +24,12 @@ app.set("views", path.resolve("./views"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(checkForAuthorization);
 
 // Routes
-app.use("/", checkAuth, staticRoute);
+app.use("/", staticRoute);
 app.use("/api/users", userRoute);
-app.use("/api/url", restrictToLoggedinUserOnly, urlRoute);
+app.use("/api/url", restrictTo(["NORMAL"]), urlRoute);
 
 // Start server
 app.listen(PORT, () => {
